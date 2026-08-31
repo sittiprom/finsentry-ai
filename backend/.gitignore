@@ -34,3 +34,6 @@ build/
 
 application-local.properties
 .env
+.idea/
+
+.DS_Store
