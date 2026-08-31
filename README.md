@@ -4,210 +4,279 @@
 
 ### Agentic Financial Transaction Investigation Platform
 
-**Java · Spring Boot · Spring AI · Tool Calling · RAG · PostgreSQL/pgvector · React**
+<p>
+  <img src="https://img.shields.io/badge/Java-21-orange?logo=openjdk" />
+  <img src="https://img.shields.io/badge/Spring%20Boot-4.0.8-6DB33F?logo=springboot&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring%20AI-2.0.0-6DB33F?logo=spring&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-17-4169E1?logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/pgvector-RAG-7B61FF" />
+  <img src="https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=111" />
+</p>
 
-FinSentry AI is a human-in-the-loop investigation assistant that helps financial investigators gather evidence, evaluate deterministic risk indicators, consult internal policy, and produce structured investigation reports.
-
-**It assists investigation — it does not autonomously declare fraud, freeze accounts, or replace an authorized investigator.**
+**Evidence first · Policy grounded · Human decided**
 
 </div>
 
 ---
 
-## ✨ Overview
-
-Fraud investigation often requires analysts to move between transaction records, customer profiles, login history, risk rules, and policy documents. FinSentry AI brings those signals together behind a single investigation workflow.
-
-Given a transaction ID, the system can:
-
-- retrieve transaction and customer context through **Spring AI Tool Calling**
-- inspect recent transaction and login activity
-- calculate **deterministic, explainable risk indicators**
-- retrieve relevant investigation policies using **RAG + pgvector**
-- generate a structured investigation report with evidence and policy matches
-- recommend `NO_ACTION`, `REVIEW`, or `ESCALATE_FOR_MANUAL_REVIEW`
-- let investigators continue exploring the case through an **Investigator Copilot**
-
-> **Human-in-the-loop by design:** FinSentry provides evidence and recommendations. Final enforcement or account decisions remain with authorized human investigators.
+> [!NOTE]
+> **FinSentry AI is an AI-powered investigation assistant for financial institutions.**  
+> It helps investigators gather evidence, calculate transparent risk indicators, retrieve relevant policy guidance, and generate structured investigation reports.  
+> **It does not autonomously declare fraud, freeze accounts, or replace an authorized human investigator.**
 
 ---
 
-## 📸 Product Preview
+## ✨ Key Features
 
-### Investigation Dashboard
+<table>
+<tr>
+<td width="50%" valign="top">
 
-A consolidated view of investigation activity, risk distribution, and recent cases.
+### 🤖 Agentic AI with Tool Calling
+The AI agent can call domain tools to retrieve transaction, customer, login, and risk data instead of relying on prompt context alone.
 
-![FinSentry AI Dashboard](docs/images/dashboard.png)
+### 🧮 Deterministic Risk Scoring
+Risk indicators are calculated in Java using explicit rules so the numerical assessment remains reproducible and explainable.
 
-### Structured Investigation Report
+### 📚 Policy Retrieval with RAG
+Relevant investigation policy is retrieved from a vector store and supplied to the model as grounded context.
 
-Each completed investigation preserves its risk score, evidence, policy matches, and recommended next step.
+</td>
+<td width="50%" valign="top">
 
-![FinSentry AI Investigation Report](docs/images/case-detail.png)
+### 📄 Structured Investigation Reports
+The agent produces a structured report containing risk level, risk score, evidence, policy matches, and a recommended next step.
 
-### Investigator Copilot — Evidence & Risk Exploration
+### 👤 Human-in-the-Loop
+Final enforcement decisions remain with authorized investigators. FinSentry is decision support, not autonomous enforcement.
 
-The Copilot can use the same internal tools to answer contextual questions about a case and surface the underlying risk indicators.
+### 💬 Investigator Copilot
+Investigators can ask contextual questions about a case, risk indicators, customer activity, and applicable policy in natural language.
 
-![FinSentry AI Copilot Risk Indicators](docs/images/copilot-risk-indicators.png)
-
-### Policy-Grounded Investigation Support
-
-The Copilot can retrieve relevant policy guidance through RAG and connect it to the evidence available for the current case.
-
-![FinSentry AI Copilot Policy](docs/images/copilot-policy.png)
+</td>
+</tr>
+</table>
 
 ---
 
-## 🧠 What Makes It Agentic?
+# 🖥️ Product Walkthrough
 
-FinSentry does more than send a transaction to an LLM.
+<table>
+<tr>
+<td width="50%" valign="top">
 
-The model is given access to a set of read-only investigation tools and can decide which information it needs to answer an investigation question.
+## 1 · Investigation Dashboard
 
-```text
-Investigator
-     │
-     ▼
-React Investigation Console
-     │
-     ▼
-Spring Boot REST API
-     │
-     ▼
-Spring AI Investigation Agent / Copilot
-     │
-     ├──────── Tool Calling ────────┐
-     │                              │
-     │   • TransactionTools         │
-     │   • CustomerTools            ▼
-     │   • LoginTool           PostgreSQL
-     │   • RiskTools
-     │
-     └──────── RAG ─────────────────┐
-                                    ▼
-                         Policy PDF → pgvector
-                                    │
-                                    ▼
-                         Grounded AI Response
-                                    │
-                                    ▼
-                    Structured Investigation Report
+Overview of investigation activity, completed cases, risk distribution, and recent investigations.
+
+<img src="docs/images/dashboard.png" alt="FinSentry AI Dashboard" />
+
+</td>
+<td width="50%" valign="top">
+
+## 2 · Investigation Report
+
+A structured case view showing the generated risk score, evidence, matched policy, and recommended investigator action.
+
+<img src="docs/images/case-report.png" alt="FinSentry AI Investigation Report" />
+
+</td>
+</tr>
+<tr>
+<td width="50%" valign="top">
+
+## 3 · Investigator Copilot
+
+The Copilot can query the same domain tools used by the investigation agent and surface current risk indicators for the active case.
+
+<img src="docs/images/copilot-risk.png" alt="FinSentry AI Copilot Risk Indicators" />
+
+</td>
+<td width="50%" valign="top">
+
+## 4 · Policy-Grounded Q&A
+
+The Copilot can retrieve policy context through RAG and connect relevant rules to the evidence available for a case.
+
+<img src="docs/images/copilot-policy.png" alt="FinSentry AI Copilot Policy" />
+
+</td>
+</tr>
+</table>
+
+---
+
+# 🏗️ Architecture Overview
+
+```mermaid
+flowchart LR
+    UI["React Frontend<br/>Dashboard · Investigate · Cases · Copilot"]
+    API["Spring Boot Backend<br/>REST · Case Management · Validation"]
+    AGENT["Spring AI Agent<br/>ChatClient"]
+    TOOLS["Domain Tools<br/>Transaction · Customer · Login · Risk"]
+    DB[("PostgreSQL<br/>Operational Data")]
+    RAG["RAG Advisor"]
+    VS[("pgvector<br/>Policy Embeddings")]
+    REPORT["Structured Investigation Report"]
+
+    UI --> API
+    API --> AGENT
+    AGENT --> TOOLS
+    TOOLS --> DB
+    AGENT --> RAG
+    RAG --> VS
+    AGENT --> REPORT
+    REPORT --> API
 ```
 
-The LLM is responsible for orchestration, synthesis, and explanation. Numerical risk indicators are calculated in Java rather than delegated to the model.
+The LLM is responsible for **tool selection, synthesis, and explanation**.  
+Risk calculations remain deterministic Java logic rather than model-generated arithmetic.
 
 ---
 
-## 🔍 Investigation Workflow
+# 🔎 Investigation Flow
 
 ```text
 Transaction ID
-     ↓
+     │
+     ▼
 Create Investigation Case
-     ↓
-Retrieve Transaction
-     ↓
+     │
+     ▼
+Retrieve transaction data
+     │
+     ▼
 Agent selects investigation tools
-     ↓
-Transaction + Customer + Login + Risk Evidence
-     ↓
-Retrieve relevant policy context (RAG)
-     ↓
-Generate structured report
-     ↓
+     │
+     ├── TransactionTools
+     ├── CustomerTools
+     ├── LoginTool
+     └── RiskTools
+     │
+     ▼
+Retrieve relevant policy context with RAG
+     │
+     ▼
+Generate structured investigation report
+     │
+     ▼
 Persist case + report
-     ↓
+     │
+     ▼
 Human investigator reviews recommendation
 ```
 
-Case execution follows a simple lifecycle:
+Case execution lifecycle:
 
 ```text
 PENDING → IN_PROGRESS → COMPLETED
                       ↘ FAILED
 ```
 
-`COMPLETED` means the AI investigation finished and the report was persisted. It does **not** mean a human investigator has closed the case.
+> `COMPLETED` means the AI investigation finished and the report was persisted.  
+> It does **not** mean the human investigator has closed the case.
 
 ---
 
-## 🧰 Core AI Capabilities
+# 🧠 Risk Assessment
 
-| Capability | Implementation |
-|---|---|
-| Agent orchestration | Spring AI `ChatClient` |
-| Tool Calling | Spring AI `@Tool` methods |
-| Transaction evidence | `TransactionTools` |
-| Customer context | `CustomerTools` |
-| Login history | `LoginTool` |
-| Risk calculation | `RiskTools` + deterministic Java rules |
-| Policy retrieval | Spring AI RAG |
-| Vector search | PostgreSQL + pgvector |
-| Structured output | AI response mapped to investigation report DTO |
-| Copilot | Context-aware investigation Q&A |
-| Human oversight | Restricted recommendations; no autonomous enforcement |
+FinSentry currently evaluates transparent, deterministic indicators such as:
 
----
-
-## 🧮 Explainable Risk Scoring
-
-Risk scoring is intentionally deterministic and implemented in Java. This keeps the numerical assessment inspectable and reproducible instead of asking the LLM to invent a score.
-
-Current indicators include:
-
-- amount anomaly relative to available transaction history
-- new/unrecognized device usage
+- unusual transaction amount
+- new or unrecognized device
 - unusual login country
 - rapid transaction activity
 - severe balance depletion
 
-The resulting score is mapped to `LOW`, `MEDIUM`, or `HIGH` risk and is surfaced alongside the underlying evidence.
+The individual indicators contribute to an aggregate score, which is mapped to:
 
-### Design limitation & next refinement
+| Risk level | Meaning |
+|---|---|
+| 🟢 `LOW` | No significant indicators |
+| 🟠 `MEDIUM` | Review-worthy anomalies |
+| 🔴 `HIGH` | Multiple or severe indicators |
 
-**Currently, recommendations are derived primarily from the aggregate risk score.** A natural next refinement would be to introduce **policy-specific escalation triggers**. For example, certain high-confidence combinations such as **new device + unusual country** could warrant escalation independently of the aggregate score.
-
-This is intentionally **not hardcoded arbitrarily** in the prototype. In a production financial system, the thresholds, signal combinations, and escalation rules should be calibrated with domain input from experienced fraud/risk analysts, validated against institutional policy and historical outcomes, and monitored for false positives and missed risk.
-
-This separation is deliberate:
+The available recommendations are intentionally constrained to:
 
 ```text
-Current prototype
-Risk indicators → Aggregate score → Risk level → Recommendation
-
-Potential production refinement
-Risk indicators ────────────────┐
-                                ├→ Policy-aware decision layer → Recommendation
-Aggregate score ────────────────┤
-                                │
-High-confidence policy triggers ┘
+NO_ACTION
+REVIEW
+ESCALATE_FOR_MANUAL_REVIEW
 ```
 
 ---
 
-## 📚 Policy Retrieval with RAG
+> [!IMPORTANT]
+> ### 💡 Design Limitation & Next Refinement
+>
+> **Currently, recommendations are derived primarily from the aggregate risk score.**
+>
+> A natural next refinement would be to introduce **policy-specific escalation triggers**. For example, certain high-confidence combinations such as **new device + unusual country** could warrant escalation independently of the aggregate score.
+>
+> This is intentionally **not hardcoded arbitrarily** in the prototype. In a production financial system, thresholds, signal combinations, and escalation rules should be calibrated with domain input from experienced fraud/risk analysts, validated against institutional policy and historical outcomes, and monitored for false positives and missed risk.
 
-FinSentry includes a **synthetic fraud & compliance investigation policy** for demonstration purposes.
+<table>
+<tr>
+<td width="46%" align="center">
 
-At application startup, the policy document is:
+### Current Prototype
 
-1. loaded from PDF
-2. split into chunks
-3. embedded
-4. stored in pgvector
-5. retrieved through Spring AI's RAG advisor when relevant
+```text
+Risk Indicators
+      ↓
+Aggregate Risk Score
+      ↓
+Risk Level
+      ↓
+Recommendation
+```
 
-This lets the agent ground investigation explanations in policy context instead of relying only on general model knowledge.
+</td>
+<td width="8%" align="center">
 
-> The bundled policy is synthetic and exists solely for this portfolio/demo project. It is not an institutional or regulatory policy.
+# → 
+
+</td>
+<td width="46%" align="center">
+
+### Potential Production Refinement
+
+```text
+Risk Indicators ───────────┐
+                           ├─→ Policy-aware decision layer
+Aggregate Risk Score ──────┤
+                           │
+Policy-specific triggers ──┘
+             ↓
+      Recommendation
+```
+
+</td>
+</tr>
+</table>
 
 ---
 
-## 💬 Investigator Copilot
+# 📚 Policy Retrieval with RAG
 
-The Copilot is a read-only investigation assistant available in the case workspace.
+FinSentry includes a **synthetic fraud and compliance investigation policy** for demonstration purposes.
+
+At startup, the application:
+
+1. loads the policy PDF
+2. splits the document into chunks
+3. generates embeddings
+4. stores them in pgvector
+5. retrieves relevant chunks through Spring AI RAG during investigations and Copilot conversations
+
+This keeps policy-oriented responses grounded in retrieved context instead of relying only on general model knowledge.
+
+> [!CAUTION]
+> The bundled policy is synthetic and is used only for this portfolio/demo project. It is **not** an institutional or regulatory policy.
+
+---
+
+# 💬 Investigator Copilot
 
 Example questions:
 
@@ -218,45 +287,85 @@ What policy applies to this case?
 
 Show the recent login activity for this customer.
 
-Has this customer used a new device?
-
-Why is this transaction unusual?
+Is this login country unusual for the customer?
 
 What evidence is still missing?
 
 Should we freeze this customer's account?
 ```
 
-For enforcement questions, FinSentry is explicitly constrained from making or authorizing the final decision. It can surface evidence and recommend review/escalation, but the action remains with an authorized investigator.
+For enforcement questions, the Copilot is constrained from making or authorizing the final decision. It can provide evidence and recommend a review path, but the action remains with an authorized human investigator.
 
 ---
 
-## 🗃️ Data
+# 🗃️ Data
 
 The transaction layer uses the **PaySim synthetic mobile-money transaction dataset** as the base transaction source.
 
-Because PaySim is transaction-focused, FinSentry supplements selected demo cases with **synthetic investigation context**, including:
+Because PaySim is transaction-focused, selected demo cases are supplemented with synthetic investigation context:
 
-- customer profile and home country
+- customer profile
+- home country
 - device information
 - login history
-- investigation cases and reports
+- investigation cases
+- persisted investigation reports
 
-The original PaySim fraud label is **not exposed to the AI during investigation**. It can instead be reserved as ground truth for offline evaluation.
+The PaySim `isFraud` label is **not exposed to the AI during investigation**. It can instead be reserved as ground truth for offline evaluation.
 
-> The full PaySim dataset is not intended to be committed to this repository. Reproduce it from the original dataset source or use small demo/sample data.
+> The full PaySim dataset should not be committed to this repository. Use the original dataset source or small demo/sample data.
 
 ---
 
-## 🏗️ Project Structure
+# 🧰 Tech Stack
+
+<table>
+<tr>
+<td width="33%" valign="top">
+
+### Backend
+- Java 21
+- Spring Boot 4.0.8
+- Spring AI 2.0.0
+- Spring Web MVC
+- Spring Data JPA
+- Maven
+
+</td>
+<td width="33%" valign="top">
+
+### AI & Data
+- OpenAI chat model
+- OpenAI embeddings
+- Spring AI Tool Calling
+- Spring AI RAG
+- PostgreSQL 17
+- pgvector
+
+</td>
+<td width="33%" valign="top">
+
+### Frontend & Infra
+- React 18
+- Vite
+- Material UI
+- Axios
+- Docker Compose
+- pgAdmin
+
+</td>
+</tr>
+</table>
+
+---
+
+# 📁 Project Structure
 
 ```text
-finsentry-ai-project/
+finsentry-ai/
 ├── backend/
 │   ├── src/main/java/com/finsentry/finsentry_ai/
 │   │   ├── ai/
-│   │   │   ├── agent/
-│   │   │   └── validator/
 │   │   ├── config/
 │   │   ├── controller/
 │   │   ├── entity/
@@ -265,9 +374,6 @@ finsentry-ai-project/
 │   │   ├── service/
 │   │   └── tool/
 │   ├── src/main/resources/
-│   │   ├── data/
-│   │   └── application.properties
-│   ├── docker-compose.yml
 │   └── pom.xml
 │
 ├── frontend/
@@ -275,54 +381,15 @@ finsentry-ai-project/
 │   ├── package.json
 │   └── vite.config.js
 │
-└── docs/
-    └── images/
+├── docs/
+│   └── images/
+│
+└── README.md
 ```
 
 ---
 
-## ⚙️ Tech Stack
-
-### Backend
-- Java 21
-- Spring Boot 4.0.8
-- Spring AI 2.0.0
-- Spring Web MVC
-- Spring Data JPA
-- PostgreSQL 17
-- pgvector
-- Maven
-
-### AI
-- OpenAI chat model
-- OpenAI embeddings
-- Spring AI Tool Calling
-- Spring AI RAG
-- PDF document ingestion
-- Structured AI output
-
-### Frontend
-- React 18
-- Vite
-- Material UI
-- Axios
-- React Router
-
-### Infrastructure
-- Docker Compose
-- PostgreSQL / pgvector
-- pgAdmin
-
----
-
-## 🚀 Running Locally
-
-### Prerequisites
-
-- Java 21+
-- Maven
-- Node.js / npm
-- Docker
+# 🚀 Getting Started
 
 ### 1. Start PostgreSQL + pgvector
 
@@ -331,27 +398,17 @@ cd backend
 docker compose up -d
 ```
 
-Default local database:
-
-```text
-Database: finsentry
-User:     finsentry
-Port:     5432
-```
-
 ### 2. Configure the OpenAI API key
-
-Do **not** commit API keys to source control.
 
 ```bash
 export OPENAI_API_KEY="your-api-key"
 ```
 
-Configure Spring to read the key from the environment, for example:
-
 ```properties
 spring.ai.openai.api-key=${OPENAI_API_KEY}
 ```
+
+> Never commit API keys or local secrets to source control.
 
 ### 3. Start the backend
 
@@ -382,75 +439,40 @@ http://localhost:5173
 
 ---
 
-## 🧪 Example Investigation
+# 🛡️ Responsible AI Boundaries
 
-```http
-POST /api/investigations
-Content-Type: application/json
-```
+FinSentry is designed as **investigation support**, not autonomous fraud enforcement.
 
-```json
-{
-  "transactionId": 4406
-}
-```
+### FinSentry may
+- retrieve evidence
+- calculate risk indicators
+- retrieve policy context
+- explain findings
+- recommend review or escalation
 
-A completed investigation can contain:
-
-```json
-{
-  "riskLevel": "HIGH",
-  "riskScore": 80,
-  "findings": [
-    "Significant balance depletion was observed.",
-    "A new device was used.",
-    "The login country differs from the customer's home country."
-  ],
-  "recommendation": "ESCALATE_FOR_MANUAL_REVIEW"
-}
-```
-
-The generated report is persisted as an investigation snapshot and can then be explored through the Investigator Copilot.
-
----
-
-## 🛡️ Responsible AI Boundaries
-
-FinSentry is designed as **decision support**, not an autonomous fraud enforcement system.
-
-The assistant must not:
-
-- declare that a customer is fraudulent
+### FinSentry must not
+- declare a customer fraudulent
 - autonomously freeze or block an account
 - reverse transactions
-- take enforcement actions
 - fabricate missing evidence
-
-Instead, it should:
-
-- retrieve available evidence
-- expose deterministic risk indicators
-- distinguish evidence from inference
-- ground policy explanations in retrieved context
-- communicate missing information
-- recommend an appropriate human review path
+- replace an authorized human investigator
 
 ---
 
-## 🔭 Future Improvements
+# 🔭 Future Improvements
 
 - policy-specific escalation triggers calibrated with fraud-domain experts
 - richer evidence provenance and policy citations
-- explicit `confirmed / relevant / insufficient-evidence` policy matching
+- `confirmed / relevant / insufficient-evidence` policy matching
 - offline evaluation against hidden PaySim ground truth
 - recommendation-quality and hallucination metrics
-- investigation audit trail and analyst decision capture
-- MCP-based exposure of selected investigation tools
+- analyst decision capture and audit trail
+- MCP exposure of selected investigation tools
 - production authentication, authorization, observability, and deployment hardening
 
 ---
 
-## ⚠️ Disclaimer
+# ⚠️ Disclaimer
 
 FinSentry AI is a **portfolio and educational prototype** built with synthetic/de-identified data and synthetic policy material. It is not a production banking system and should not be used to make real financial, fraud, compliance, or enforcement decisions.
 
@@ -458,7 +480,8 @@ FinSentry AI is a **portfolio and educational prototype** built with synthetic/d
 
 <div align="center">
 
-**FinSentry AI**  
-*Evidence first. Policy grounded. Human decided.*
+### 🛡️ FinSentry AI
+
+**Evidence first · Policy grounded · Human decided**
 
 </div>
