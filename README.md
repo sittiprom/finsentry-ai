@@ -354,6 +354,7 @@ Choose any returned `id` and enter it as the **Transaction ID** on the Investiga
 
 This separation allows the system's recommendations to later be compared against the PaySim ground truth without leaking the expected outcome into the investigation process.
 
+
 # 🧰 Tech Stack
 
 <table>
@@ -517,7 +518,7 @@ FinSentry AI is a **portfolio and educational prototype** built with synthetic/d
 
 <div align="center">
 
-### 🛡️ FinSentry AI
+### FinSentry AI
 
 **Evidence first · Policy grounded · Human decided**
 
