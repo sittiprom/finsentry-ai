@@ -1,4 +1,4 @@
-package com.finsentry.finsentry_ai.tool;
+package com.finsentry.finsentry_ai.ai.tool;
 
 import com.finsentry.finsentry_ai.entity.Customer;
 import com.finsentry.finsentry_ai.service.CustomerService;

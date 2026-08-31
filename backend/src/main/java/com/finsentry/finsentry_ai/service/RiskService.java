@@ -104,10 +104,10 @@ public class RiskService {
             score += 25;
         }
 
-        if (newDevice) score += 20;
-        if (unusualCountry) score += 20;
+        if (newDevice) score += 25;
+        if (unusualCountry) score += 25;
         if (rapidTransactions) score += 25;
-        if (balanceDrained) score += 25;
+        if (balanceDrained) score += 30;
 
         return Math.min(score, 100);
     }

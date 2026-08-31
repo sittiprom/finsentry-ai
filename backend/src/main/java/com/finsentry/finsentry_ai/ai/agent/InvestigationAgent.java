@@ -2,10 +2,10 @@ package com.finsentry.finsentry_ai.ai.agent;
 
 
 import com.finsentry.finsentry_ai.api.InvestigationReport;
-import com.finsentry.finsentry_ai.tool.CustomerTools;
-import com.finsentry.finsentry_ai.tool.LoginTool;
-import com.finsentry.finsentry_ai.tool.RiskTools;
-import com.finsentry.finsentry_ai.tool.TransactionTools;
+import com.finsentry.finsentry_ai.ai.tool.CustomerTools;
+import com.finsentry.finsentry_ai.ai.tool.LoginTool;
+import com.finsentry.finsentry_ai.ai.tool.RiskTools;
+import com.finsentry.finsentry_ai.ai.tool.TransactionTools;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Component;
 

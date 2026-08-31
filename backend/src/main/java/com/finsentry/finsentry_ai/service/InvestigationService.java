@@ -10,7 +10,6 @@ import com.finsentry.finsentry_ai.entity.InvestigationReportEntity;
 import com.finsentry.finsentry_ai.entity.TransactionInvestigationView;
 import com.finsentry.finsentry_ai.repository.InvestigationCaseRepository;
 import com.finsentry.finsentry_ai.repository.InvestigationReportRepository;
-import com.finsentry.finsentry_ai.tool.LoginTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +25,6 @@ import java.util.List;
 public class InvestigationService {
 
     private final TransactionService transactionService;
-    private final CustomerService customerService;
     private final InvestigationCaseRepository caseRepository;
     private final InvestigationReportRepository reportRepository;
     private final InvestigationAgent investigationAgent;
@@ -36,10 +34,9 @@ public class InvestigationService {
 
     @Value("${spring.ai.openai.chat.options.model}")
     private String modelUsed;
-    public InvestigationService(TransactionService transactionService, CustomerService customerService,
+    public InvestigationService(TransactionService transactionService,
                                 InvestigationCaseRepository caseRepository, InvestigationReportRepository reportRepository, InvestigationAgent investigationAgent, ReportValidator reportValidator) {
         this.transactionService = transactionService;
-        this.customerService = customerService;
         this.caseRepository = caseRepository;
         this.reportRepository = reportRepository;
         this.investigationAgent = investigationAgent;
@@ -73,6 +70,7 @@ public class InvestigationService {
             investigationCase.setStatus(InvestigationCase.CaseStatus.IN_PROGRESS);
             caseRepository.save(investigationCase);
 
+            long start = System.currentTimeMillis();
             var aiResult = investigationAgent.investigate(
                     transaction.getId()
             );
@@ -87,9 +85,8 @@ public class InvestigationService {
 
             // 6. Persist AI report
             var report = new InvestigationReportEntity();
-            long start = System.currentTimeMillis();
-            int executionTimeMs = (int) (System.currentTimeMillis() - start);
 
+            int executionTimeMs = (int) (System.currentTimeMillis() - start);
             report.setCaseId(investigationCase.getId());
             report.setRiskLevel(aiResult.riskLevel());
             report.setRiskScore(aiResult.riskScore());

@@ -1,8 +1,6 @@
-package com.finsentry.finsentry_ai.tool;
+package com.finsentry.finsentry_ai.ai.tool;
 
-import com.finsentry.finsentry_ai.entity.Customer;
 import com.finsentry.finsentry_ai.entity.LoginHistory;
-import com.finsentry.finsentry_ai.repository.LoginRepository;
 import com.finsentry.finsentry_ai.service.LoginHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

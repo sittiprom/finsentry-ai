@@ -35,7 +35,8 @@ public class AiConfig {
                 from the transaction tool (e.g. "C97242201") — never invent, reformat, or
                 guess a customer ID. Always call getTransaction first to obtain the real
                 nameOrig, then use that exact value for all customer and login lookups.
-                Since staff may not know country abbreviation. Please tell it in full name.
+                When country codes are returned (for example GB or NG),
+                present the corresponding full country name to the investigator.
             
                 Rules:
                 - Never state or imply a customer has committed fraud.
