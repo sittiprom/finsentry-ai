@@ -317,6 +317,43 @@ The PaySim `isFraud` label is **not exposed to the AI during investigation**. It
 
 ---
 
+## 🧪 Selecting Transactions for Testing
+
+FinSentry uses the PaySim dataset as its underlying transaction source. To make manual testing easier, known fraudulent transactions can be selected using the dataset's ground-truth `is_fraud` label.
+
+The following query returns fraudulent transactions that also have the synthetic customer, login, and device context required for a richer FinSentry investigation:
+
+```sql
+SELECT
+    t.id,
+    t.amount,
+    t.oldbalance_org,
+    t.newbalance_orig,
+    l.country AS login_country,
+    c.home_country,
+    d.trusted
+FROM transactions t
+JOIN customers c
+    ON c.customer_id = t.name_orig
+JOIN login_history l
+    ON l.transaction_id = t.id
+JOIN devices d
+    ON d.device_id = l.device_id
+WHERE t.is_fraud = TRUE
+ORDER BY t.amount DESC
+LIMIT 20;
+```
+
+Choose any returned `id` and enter it as the **Transaction ID** on the Investigate page.
+
+> [!IMPORTANT]
+> ### Ground-truth isolation
+> The `is_fraud` field is used **only for test-case selection and offline evaluation**. It is not exposed to the investigation agent, risk-scoring tools, RAG pipeline, or Investigator Copilot during an investigation.
+>
+> FinSentry must therefore reach its assessment using only the evidence available to an investigator — such as transaction behavior, customer context, device information, login activity, calculated risk indicators, and retrieved policy guidance.
+
+This separation allows the system's recommendations to later be compared against the PaySim ground truth without leaking the expected outcome into the investigation process.
+
 # 🧰 Tech Stack
 
 <table>
