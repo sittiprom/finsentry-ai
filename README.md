@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🛡️ FinSentry AI
+#  FinSentry AI
 
 ### Agentic Financial Transaction Investigation Platform
 
