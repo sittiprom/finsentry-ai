@@ -1,0 +1,18 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  background-color: #0B0E17;
+}
+
+::selection {
+  background: #14B8A6;
+  color: #0B0E17;
+}

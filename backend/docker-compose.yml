@@ -1,0 +1,28 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: finsentry-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: finsentry
+      POSTGRES_USER: finsentry
+      POSTGRES_PASSWORD: finsentry
+    ports:
+      - "5432:5432"
+    volumes:
+      - finsentry_postgres_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: finsentry-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+
+volumes:
+  finsentry_postgres_data:

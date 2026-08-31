@@ -1,0 +1,26 @@
+// Add this field to InvestigationController (alongside your existing fields):
+
+@Value("${app.demo-mode:false}")
+private boolean demoMode;
+
+
+// Add this check as the FIRST line inside your existing POST method body,
+// before anything else runs — this stops the LLM call (and the cost) before
+// it starts, not after:
+
+@PostMapping("/api/investigations")
+public InvestigationResponse startInvestigation(@RequestBody InvestigationRequest investigationRequest) {
+    if (demoMode) {
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+            "This is a read-only demo. New investigations are disabled to avoid unexpected " +
+            "API costs — browse the existing cases instead.");
+    }
+
+    // ... rest of your existing method body, unchanged ...
+}
+
+
+// Required imports if not already present:
+// import org.springframework.beans.factory.annotation.Value;
+// import org.springframework.http.HttpStatus;
+// import org.springframework.web.server.ResponseStatusException;
